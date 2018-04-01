@@ -1,0 +1,11 @@
+TODO
+flags:
+  xmobar:
+    with_utf8: true
+    with_xft: true
+    with_mpd: true
+    with_inotify: true
+    with_iwlib: true
+    with_alsa: true
+    with_weather: true
+    with_conduit: true
