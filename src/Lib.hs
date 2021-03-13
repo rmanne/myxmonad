@@ -21,14 +21,30 @@ import qualified XMonad.Util.URxvt as URxvt
 
 import qualified Data.Map.Strict as Map
 import Data.Map.Strict(Map)
+import Data.Maybe(fromJust)
 
 import System.Exit(exitWith, ExitCode(ExitSuccess))
 
+--termHere :: XConfig Layout -> X ()
+--termHere conf = focused >>= \window -> maybeMapM (runQuery className) window >>= \case
+--  Just "Alacritty" -> spawn $ "sleep 0.1 && xdotool key --clearmodifiers --window " ++ show (fromJust window) ++ " 'super+n'"
+--  _ -> spawn (terminal conf)
+--  where
+--    focused :: X (Maybe Window)
+--    focused = withWindowSet (return . W.peek)
+
+    -- this was impossible to search for in the first place, and i have no clue how fmapMaybeM and maybeMapM are different but the signature is the same...
+--    maybeMapM :: Monad m => (a -> m b) -> (Maybe a -> m (Maybe b))
+--    maybeMapM _ Nothing  = return Nothing
+--    maybeMapM m (Just x) = Just <$> m x
+
 xmonadKeys :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 xmonadKeys conf@(XConfig { modMask = modm, borderWidth = bw }) = Map.fromList $
-    [ ((modm .|. shiftMask, xK_Return), URxvt.home)
-    , ((modm              , xK_n     ), URxvt.copy)
-    , ((modm              , xK_p     ), spawn "exe=`dmenu_path | dmenu` && eval \"exec $exe\"")
+    --[ ((modm .|. shiftMask, xK_Return), URxvt.home)
+    --, ((modm              , xK_n     ), URxvt.copy)
+    --[ ((modm              , xK_n     ), termHere conf)
+    [ ((modm .|. shiftMask, xK_Return), spawn (terminal conf))
+    , ((modm              , xK_p     ), spawn "rofi -modi drun -show drun -sorting-method fzf -sort -theme solarized")
 
     , ((modm .|. shiftMask, xK_c     ), kill)
  
@@ -60,7 +76,6 @@ xmonadKeys conf@(XConfig { modMask = modm, borderWidth = bw }) = Map.fromList $
     , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
-    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
     ]
     ++
     -- TODO: turn workspaces into proper project-based layouts
@@ -80,9 +95,9 @@ xmonadKeys conf@(XConfig { modMask = modm, borderWidth = bw }) = Map.fromList $
     , ((modm              , xK_u), XMobars.update)
     , ((modm .|. shiftMask, xK_u), XMobars.reset)
 
-    , ((modm, xK_0    ), spawn "mpc prev")
-    , ((modm, xK_minus), spawn "mpc toggle")
-    , ((modm, xK_equal), spawn "mpc next")
+    --, ((modm, xK_0    ), spawn "mpc prev")
+    --, ((modm, xK_minus), spawn "mpc toggle")
+    --, ((modm, xK_equal), spawn "mpc next")
 
     --, ((0, xF86XK_AudioMute        ), spawn "pactl set-sink-mute 1 toggle")
     --, ((0, xF86XK_AudioLowerVolume ), spawn "pactl set-sink-volume 1 -5%")
@@ -96,14 +111,14 @@ xmonadKeys conf@(XConfig { modMask = modm, borderWidth = bw }) = Map.fromList $
     ]
 
 xmonadConfig = docks $ def
-    { terminal = "urxvtc"
+    { terminal = "alacritty"
     , focusFollowsMouse = False
     , mouseBindings = \_ -> Map.empty
     , borderWidth = 2
     , normalBorderColor = "#000000"
     , keys = xmonadKeys
-    , manageHook = URxvt.manageHook <+> manageHook def
+    --, manageHook = URxvt.manageHook <+> manageHook def
     , layoutHook = avoidStruts $ minimize $ smartSpacing 1 $ smartBorders $ ThreeCol 1 (3/100) (1/3) ||| Tall 1 (3/100) (1/2) ||| Full
     , logHook = XMobars.logHook <+> logHook def
-    , handleEventHook = URxvt.eventHook <+> handleEventHook def
+    --, handleEventHook = URxvt.eventHook <+> handleEventHook def
     }

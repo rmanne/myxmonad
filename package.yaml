@@ -28,14 +28,19 @@ dependencies:
 - xmonad-contrib
 - network
 - regex-posix
-- yi-core
-- yi-frontend-pango
-- yi-misc-modes
-- yi-mode-haskell
-- yi-mode-javascript
-- yi-language
-- yi-fuzzy-open
-- yi-keymap-vim
+  #- yi-core
+  #- yi-frontend-pango
+  #- yi-misc-modes
+  #- yi-mode-haskell
+  #- yi-mode-javascript
+  #- yi-language
+  #- yi-fuzzy-open
+  #- yi-keymap-vim
+
+default-extensions:
+- LambdaCase
+- OverloadedStrings
+- TupleSections
 
 library:
   source-dirs: src
